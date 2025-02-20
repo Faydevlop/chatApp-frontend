@@ -1,20 +1,47 @@
 import React, { useState } from 'react';
 import { MessageSquare, Mail, Lock } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '@/redux/slices/authSlice';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const Login = () => {
-    const [credentials, setCredentials] = useState({ email: '', password: '' });
-  const [isLoading, setIsLoading] = useState(false);
+  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [formErrors, setFormErrors] = useState({});
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const { loading, error } = useSelector((state) => state.auth);
+
+  const validateForm = () => {
+    let errors = {};
+    if (!credentials.email) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(credentials.email)) {
+      errors.email = 'Enter a valid email address';
+    }
+
+    if (!credentials.password) {
+      errors.password = 'Password is required';
+    } else if (credentials.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters long';
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      onLogin(credentials);
-      setIsLoading(false);
-    }, 1000);
+    if (!validateForm()) return;
+
+    const response = await dispatch(loginUser(credentials));
+
+    if (response.payload && response.payload.success) {
+      router.push('/users/main');
+    }
   };
+
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -27,13 +54,14 @@ const Login = () => {
             <p className="text-gray-400">Sign in to continue to Chat</p>
           </div>
 
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300">Email</label>
               <div className="relative">
                 <input
                   type="email"
-                  required
                   className="w-full bg-gray-800 text-white px-4 py-3 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700 transition-all"
                   placeholder="Enter your email"
                   value={credentials.email}
@@ -41,6 +69,7 @@ const Login = () => {
                 />
                 <Mail className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
               </div>
+              {formErrors.email && <p className="text-red-500 text-sm">{formErrors.email}</p>}
             </div>
 
             <div className="space-y-2">
@@ -48,7 +77,6 @@ const Login = () => {
               <div className="relative">
                 <input
                   type="password"
-                  required
                   className="w-full bg-gray-800 text-white px-4 py-3 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700 transition-all"
                   placeholder="Enter your password"
                   value={credentials.password}
@@ -56,14 +84,15 @@ const Login = () => {
                 />
                 <Lock className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
               </div>
+              {formErrors.password && <p className="text-red-500 text-sm">{formErrors.password}</p>}
             </div>
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={loading}
               className="w-full bg-white text-black py-3 rounded-lg font-semibold hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? (
+              {loading ? (
                 <div className="flex items-center justify-center">
                   <div className="w-5 h-5 border-2 border-gray-800 border-t-transparent rounded-full animate-spin"></div>
                 </div>
@@ -83,14 +112,15 @@ const Login = () => {
         <div className="text-center mt-6">
           <p className="text-gray-400">
             Don't have an account?{' '}
-            <a href="#" className="text-white hover:underline">
+            <Link href="/auth/signup" className="text-white hover:underline">
               Sign up
-            </a>
+            </Link>
+           
           </p>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
