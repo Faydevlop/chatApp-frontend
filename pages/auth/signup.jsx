@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { MessageSquare, Mail, Lock, User } from "lucide-react";
-import { signupUser } from  '@/redux/slices/authSlice'; // Import your Redux action
+import { clearError, signupUser } from  '@/redux/slices/authSlice'; // Import your Redux action
 import Link from "next/link";
+import { toast } from "react-hot-toast";
+
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -19,6 +21,7 @@ const Signup = () => {
     confirmPassword: "",
   });
   const [formErrors, setFormErrors] = useState({});
+  
 
   const validateForm = () => {
     let errors = {};
@@ -47,13 +50,28 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
-    const response = await dispatch(signupUser(formData));
-
-    if (response.payload && response.payload.success) {
-      router.push("/auth/otp");
-    }
+  
+    const signupPromise = dispatch(signupUser(formData));
+  
+    toast.promise(signupPromise, {
+      loading: "Signing up...",
+      error: <b>Failed to send OTP. Please try again.</b>,
+    });
+  
+    signupPromise.then((response) => {
+      if (response.payload && response.payload.success) {
+        toast.success("OTP sent successfully! Redirecting...");
+        router.push("/auth/otp");
+      }
+    });
   };
+  
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

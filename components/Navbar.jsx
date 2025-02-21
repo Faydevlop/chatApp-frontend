@@ -1,19 +1,22 @@
 import React from "react";
 import { useRouter } from "next/router";
+import { logout } from '@/redux/slices/authSlice';
 import { MessageSquare, Settings, User, LogOut } from "lucide-react";
+import { useDispatch } from "react-redux";
 
 const Navbar = () => {
   const router = useRouter();
+  const dispatch = useDispatch()
   const currentPath = router.pathname; // Get current route
 
   const menuItems = [
-    { path: "/chat/main", icon: <MessageSquare className="w-6 h-6" />, name: "chats" },
+    { path: "/user/chat", icon: <MessageSquare className="w-6 h-6" />, name: "chats" },
     { path: "/user/profile", icon: <User className="w-6 h-6" />, name: "profile" },
     { path: "/user/settings", icon: <Settings className="w-6 h-6" />, name: "settings" },
   ];
 
   const handleLogout = () => {
-    alert("Logged out");
+    dispatch(logout())
   };
 
   return (

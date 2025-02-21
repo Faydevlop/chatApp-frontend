@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { LogOut, Bell, EyeOff, CloudUpload, Moon, Sun } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import withAuth from "@/components/hoc/withAuth";
 
 const Settings = () => {
   // State for toggles
@@ -106,4 +107,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default withAuth(Settings);

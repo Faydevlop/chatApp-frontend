@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { MessageSquare, Mail, Lock } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '@/redux/slices/authSlice';
+import { clearError, loginUser } from '@/redux/slices/authSlice';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
+
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -31,6 +33,12 @@ const Login = () => {
     return Object.keys(errors).length === 0;
   };
 
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -38,8 +46,9 @@ const Login = () => {
     const response = await dispatch(loginUser(credentials));
 
     if (response.payload && response.payload.success) {
-      router.push('/users/main');
+      router.push('/user/chat');
     }
+    
   };
 
   return (

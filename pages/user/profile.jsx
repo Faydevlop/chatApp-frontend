@@ -1,6 +1,7 @@
 import React from "react";
 import { LogOut, UserCircle2, Edit } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import withAuth from "@/components/hoc/withAuth";
 
 const Profile = () => {
   const user = {
@@ -51,4 +52,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default withAuth(Profile);
