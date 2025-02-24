@@ -2,14 +2,13 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // Base API URL (Replace with your backend URL)
-const API_URL = "http://localhost:5000/api";
 
 // Async Thunks for Login and Signup
 export const loginUser = createAsyncThunk(
   "auth/login",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/users/login`, userData);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, userData);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -23,7 +22,7 @@ export const signupUser = createAsyncThunk(
   "auth/signup",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/users/register`, userData);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, userData);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -37,7 +36,7 @@ export const otpVerify = createAsyncThunk(
   "auth/otp",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/users/verifyotp`, userData);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/verifyotp`, userData);
       return response.data;
     } catch (error) {
       return rejectWithValue(

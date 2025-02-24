@@ -2,11 +2,16 @@ import axios from 'axios';
 import { UserPlus } from 'lucide-react';
 import React, { useState } from 'react';
 import axiosInstance from '@/middleware/axiosInstance';
+import { useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 
 const AddUserModal = ({ isOpen, onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResult, setSearchResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const { loading, error ,user} = useSelector((state) => state.auth);
+
 
 
   const handleSearch = async () => {
@@ -29,9 +34,34 @@ const AddUserModal = ({ isOpen, onClose }) => {
       setErrorMessage("An error occurred while searching. Please try again."); // ❌ Display API error
     }
   };
+
+  const handleAddUser = async (userId) => {
+  try {
+    console.log(userId);
+
+    await toast.promise(
+      axiosInstance.post(`${process.env.NEXT_PUBLIC_API_URL}/users/addUser`, {
+       
+          userId: user._id,
+          friendId: userId,
+     
+      }),
+      {
+        loading: "Adding User...",
+        success: "User added successfully!",
+        error: "Failed to add user. Please try again.",
+      }
+    );
+
+  } catch (error) {
+    console.error("Error adding user:", error);
+  }
+};
   
 
   if (!isOpen) return null;
+
+  
 
   
 
@@ -75,7 +105,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Add User Button */}
-        <button className="text-blue-500 hover:text-blue-600">
+        <button onClick={()=>{handleAddUser(user._id)}} className="text-blue-500 hover:text-blue-600">
           <UserPlus className="w-5 h-5 mr-4 hover:text-white" />
         </button>
       </div>

@@ -2,16 +2,17 @@ import React from "react";
 import { LogOut, UserCircle2, Edit } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import withAuth from "@/components/hoc/withAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/redux/slices/authSlice";
 
 const Profile = () => {
-  const user = {
-    name: "John Doe",
-    email: "johndoe@example.com",
-    status: "Living the dream!",
-    avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop",
-  };
+  const dispatch = useDispatch()
+  const { loading, error ,user} = useSelector((state) => state.auth);
 
+  const handleLogout = () => {
+    dispatch(logout())
+  };
+  
   return (
     <div className="min-h-screen bg-black text-white flex">
       {/* Navigation Sidebar */}
@@ -30,7 +31,7 @@ const Profile = () => {
 
         {/* User Info */}
         <div className="mt-4 text-center">
-          <h2 className="text-2xl font-bold">{user.name}</h2>
+          <h2 className="text-2xl font-bold">{user.username}</h2>
           <p className="text-gray-400">{user.email}</p>
           <p className="text-gray-300 mt-2">{user.status}</p>
         </div>
@@ -42,7 +43,7 @@ const Profile = () => {
             Edit Profile
           </button>
 
-          <button className="flex items-center justify-center w-full bg-red-600 px-4 py-2 rounded-lg hover:bg-red-500 transition-all">
+          <button  onClick={handleLogout} className="flex items-center justify-center w-full bg-red-600 px-4 py-2 rounded-lg hover:bg-red-500 transition-all">
             <LogOut className="w-5 h-5 mr-2" />
             Logout
           </button>

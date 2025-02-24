@@ -20,41 +20,11 @@ const page = () => {
   const [searchQuery, setSearchQuery] = useState(null);
   const [activeNav, setActiveNav] = useState("chats");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [updatedmessages, setUpdatedmessages] = useState([]);
+
+
 
   
-  const [messages] = useState([
-    { id: 1, text: "Hey there!", sent: true, timestamp: "10:00 AM" },
-    { id: 2, text: "Hello! How are you?", sent: false, timestamp: "10:01 AM" },
-    { id: 3, text: "I'm doing great, thanks!", sent: true, timestamp: "10:02 AM" },
-  ]);
-
-  const { loading, error ,user} = useSelector((state) => state.auth);
-  console.log('here is the user',user);
-  
-
-  const users = [
-    {
-      id: 1,
-      name: "John Doe",
-      lastMessage: "Hey there!",
-      time: "10:00 AM",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop"
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      lastMessage: "How's it going?",
-      time: "09:45 AM",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop"
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      lastMessage: "See you tomorrow!",
-      time: "Yesterday",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop"
-    }
-  ];
 
 
   const handleSearchClick = ()=>{
@@ -95,17 +65,17 @@ const page = () => {
 
       </div>
     {/* Users Listing */}
-     <UserList users={users} setSelectedUser={setSelectedUser} selectedUser={selectedUser} />
+     <UserList  setSelectedUser={setSelectedUser} selectedUser={selectedUser} />
     </div>
 
     {/* Right Section - Chat */}
     <div className={`flex-1 ${selectedUser ? 'block' : 'hidden md:block'}`}>
   {selectedUser ? (
     <div className="flex flex-col h-screen">
-      <ChatHeader selectedUser={selectedUser} handleBackClick={() => setSelectedUser(null)} />
-      <MessageList messages={messages} className="flex-1 overflow-y-auto" />
+      <ChatHeader selectedUser={selectedUser}  handleBackClick={() => setSelectedUser(null)} />
+      <MessageList   selectedUser={selectedUser}  className="flex-1 overflow-y-auto" />
       <div className="w-full bg-gray-900 border-t border-gray-800">
-        <MessageInput />
+        <MessageInput selectedUser={selectedUser}  />
       </div>
     </div>
   ) : (
