@@ -30,6 +30,14 @@ const MessageList = ({ selectedUser }) => {
   },[selectedUser])
 
 
+  useEffect(() => {
+    if (socket && user?._id) {
+        socket.emit("joinRoom", user._id);
+    }
+}, [socket, user]);
+
+
+
   // listen for new messages
   useEffect(()=>{
     if(!socket) return ;

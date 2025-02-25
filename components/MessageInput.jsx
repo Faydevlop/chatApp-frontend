@@ -23,6 +23,9 @@ const MessageInput = ({selectedUser,}) => {
     // emit message to server
     socket.emit("sendMessage",messageData)
 
+    // 
+    setMessage((prev) => [...prev, messageData])
+
     // Clear Input field
     setMessage("")
 
